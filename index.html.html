@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rohit Kumar | QA Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Clash+Display:wght@400;500;600;700&family=Epilogue:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#080c12;--bg2:#0d1220;--surface:#111827;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.12);
+  --accent:#00e5ff;--accent-rgb:0,229,255;
+  --accent2:#ff6b35;--text:#e8edf5;--muted:#6b7a94;
+}
+[data-theme="light"]{
+  --bg:#f0f4f8;--bg2:#e4eaf2;--surface:#ffffff;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.15);
+  --text:#0f1923;--muted:#5a6a82;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Epilogue',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none;transition:background 0.4s,color 0.4s;}
+
+/* PRINT */
+@media print{
+  .cursor,.cursor-ring,#bgCanvas,nav,.progress-bar,#chatBtn,#chatPanel,
+  #hireBanner,#musicBtn,#themeBtn,#langBtn,#printBtn{display:none!important;}
+  body{cursor:auto;background:#fff!important;color:#000!important;}
+  .hero-name,.section-title{color:#000!important;-webkit-text-stroke:0!important;}
+  .hero-name .line2{color:#000!important;}
+  section,#hero{padding:20px!important;max-width:100%!important;}
+  .skill-card,.edu-card,.contact-item{background:#f5f5f5!important;border:1px solid #ddd!important;}
+  .reveal{opacity:1!important;transform:none!important;}
+  .hero-label,.hero-desc,.hero-ctas,.hero-stats{opacity:1!important;animation:none!important;}
+  .hero-name{opacity:1!important;animation:none!important;}
+}
+
+/* CURSOR */
+.cursor{width:12px;height:12px;background:#00e5ff;border-radius:50%;position:fixed;pointer-events:none;z-index:9999;opacity:0;transition:opacity 0.2s,transform 0.1s;box-shadow:0 0 8px rgba(0,229,255,0.8);}
+.cursor-ring{width:38px;height:38px;border:2px solid #00e5ff;border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transition:transform 0.15s,opacity 0.2s;opacity:0;box-shadow:0 0 6px rgba(0,229,255,0.3);}
+
+/* CANVAS */
+#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;opacity:0.4;}
+
+/* PROGRESS */
+.progress-bar{position:fixed;top:0;left:0;height:2px;background:var(--accent);z-index:300;transition:width 0.1s;box-shadow:0 0 10px var(--accent);}
+
+/* HIRE BANNER */
+#hireBanner{position:fixed;top:0;left:0;right:0;z-index:250;background:var(--accent);color:var(--bg);text-align:center;padding:10px 48px;font-family:'Space Mono',monospace;font-size:0.72rem;letter-spacing:1.5px;display:flex;align-items:center;justify-content:center;gap:12px;}
+#hireBanner .close-banner{background:none;border:none;cursor:none;color:var(--bg);font-size:1rem;position:absolute;right:16px;opacity:0.7;}
+#hireBanner .close-banner:hover{opacity:1;}
+
+/* NAV */
+nav{position:fixed;top:38px;left:0;right:0;z-index:200;padding:18px 48px;display:flex;justify-content:space-between;align-items:center;background:rgba(8,12,18,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:top 0.3s;}
+nav.no-banner{top:0;}
+[data-theme="light"] nav{background:rgba(240,244,248,0.9);}
+.nav-logo{font-family:'Space Mono',monospace;font-size:1rem;color:var(--accent);letter-spacing:1px;}
+.nav-links{display:flex;gap:32px;list-style:none;}
+.nav-links a{font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--muted);text-decoration:none;letter-spacing:1.5px;text-transform:uppercase;transition:color 0.2s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--accent);transition:width 0.3s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-links a:hover::after{width:100%;}
+.nav-actions{display:flex;align-items:center;gap:10px;}
+.nav-icon-btn{background:none;border:1px solid var(--border2);color:var(--text);width:34px;height:34px;border-radius:50%;cursor:none;font-size:0.85rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.nav-icon-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* LANG DROPDOWN */
+.lang-wrap{position:relative;}
+#langPanel{position:absolute;top:44px;right:0;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:6px;display:none;min-width:120px;z-index:400;}
+#langPanel.open{display:block;}
+.lang-opt{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--muted);padding:8px 12px;border-radius:6px;cursor:none;transition:all 0.2s;display:flex;align-items:center;gap:8px;}
+.lang-opt:hover,.lang-opt.active{background:rgba(var(--accent-rgb),0.1);color:var(--accent);}
+
+/* HERO */
+#hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding-top:130px;max-width:1100px;margin:0 auto;padding-left:48px;padding-right:48px;position:relative;z-index:1;}
+.hero-label{font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;opacity:0;animation:fadeUp 0.8s 0.2s forwards;display:flex;align-items:center;gap:12px;}
+.hero-label::before{content:'';width:40px;height:1px;background:var(--accent);}
+.hero-name{font-family:'Clash Display',sans-serif;font-size:clamp(3.5rem,10vw,7rem);font-weight:700;line-height:0.92;letter-spacing:-3px;opacity:0;animation:fadeUp 0.8s 0.4s forwards;}
+.hero-name .line2{color:transparent;-webkit-text-stroke:1px rgba(255,255,255,0.3);}
+.hero-name .accent{color:var(--accent);}
+.hero-desc{max-width:520px;font-size:1.05rem;color:var(--muted);line-height:1.7;margin-top:28px;opacity:0;animation:fadeUp 0.8s 0.6s forwards;min-height:2.2em;}
+.hero-ctas{display:flex;gap:16px;margin-top:40px;opacity:0;animation:fadeUp 0.8s 0.8s forwards;flex-wrap:wrap;}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:var(--bg);font-family:'Space Mono',monospace;font-size:0.78rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:14px 28px;border-radius:4px;text-decoration:none;transition:all 0.3s;cursor:none;border:none;}
+.btn-primary:hover{background:#fff;transform:translateY(-2px);box-shadow:0 20px 40px rgba(0,229,255,0.2);}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:0.78rem;letter-spacing:1px;text-transform:uppercase;padding:14px 28px;border-radius:4px;text-decoration:none;transition:all 0.3s;cursor:none;background:none;}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.hero-stats{display:flex;gap:48px;margin-top:64px;padding-top:40px;border-top:1px solid var(--border);opacity:0;animation:fadeUp 0.8s 1s forwards;flex-wrap:wrap;}
+.stat-num{font-family:'Clash Display',sans-serif;font-size:2.4rem;font-weight:700;color:var(--accent);line-height:1;}
+.stat-label{font-size:0.78rem;color:var(--muted);margin-top:4px;letter-spacing:0.5px;}
+
+/* SECTIONS */
+section{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:0 48px;}
+.section-wrap{padding:120px 0;}
+.section-eyebrow{font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
+.section-eyebrow::before{content:'';width:30px;height:1px;background:var(--accent);}
+.section-title{font-family:'Clash Display',sans-serif;font-size:clamp(2rem,5vw,3.2rem);font-weight:700;letter-spacing:-1.5px;line-height:1.1;margin-bottom:56px;}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+.reveal-delay-1{transition-delay:0.1s;}
+.reveal-delay-2{transition-delay:0.2s;}
+.reveal-delay-3{transition-delay:0.3s;}
+.reveal-delay-4{transition-delay:0.4s;}
+
+/* ABOUT */
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+.about-text{font-size:1rem;color:var(--muted);line-height:1.8;}
+.about-text p+p{margin-top:16px;}
+.about-highlights{display:flex;flex-direction:column;gap:14px;}
+.highlight-item{display:flex;align-items:center;gap:16px;padding:16px 20px;background:var(--surface);border:1px solid var(--border);border-radius:10px;transition:all 0.3s;}
+.highlight-item:hover{border-color:rgba(0,229,255,0.2);transform:translateX(6px);}
+.highlight-icon{font-size:1.4rem;width:44px;height:44px;display:flex;align-items:center;justify-content:center;background:rgba(var(--accent-rgb),0.05);border-radius:8px;flex-shrink:0;}
+.highlight-label{font-weight:600;font-size:0.9rem;}
+.highlight-sub{font-size:0.78rem;color:var(--muted);margin-top:2px;}
+
+/* LANG DOTS */
+.lang-list{display:flex;flex-direction:column;gap:16px;}
+.lang-name{font-size:0.88rem;font-weight:500;margin-bottom:6px;display:flex;justify-content:space-between;}
+.lang-level{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--accent);}
+.lang-dots{display:flex;gap:5px;}
+.lang-dot{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid var(--border);}
+.lang-dot.filled{background:var(--accent);border-color:var(--accent);}
+
+/* EXPERIENCE */
+.exp-timeline{position:relative;padding-left:32px;}
+.exp-timeline::before{content:'';position:absolute;left:0;top:8px;bottom:0;width:1px;background:linear-gradient(to bottom,var(--accent),transparent);}
+.exp-item{position:relative;padding-bottom:56px;}
+.exp-item::before{content:'';position:absolute;left:-36px;top:8px;width:10px;height:10px;background:var(--accent);border-radius:50%;box-shadow:0 0 0 4px var(--bg),0 0 16px var(--accent);}
+.exp-period{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--accent);letter-spacing:1.5px;margin-bottom:8px;}
+.exp-title{font-family:'Clash Display',sans-serif;font-size:1.6rem;font-weight:600;letter-spacing:-0.5px;}
+.exp-company{font-size:0.9rem;color:var(--muted);margin-top:4px;margin-bottom:20px;}
+.exp-company span{color:var(--accent2);font-weight:600;}
+.exp-bullets{list-style:none;display:flex;flex-direction:column;gap:10px;}
+.exp-bullets li{font-size:0.9rem;color:var(--muted);line-height:1.6;display:flex;gap:12px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;transition:border-color 0.3s,transform 0.3s;}
+.exp-bullets li:hover{border-color:rgba(0,229,255,0.2);transform:translateX(4px);}
+.exp-bullets li::before{content:'▸';color:var(--accent);flex-shrink:0;font-size:0.75rem;margin-top:2px;}
+
+/* SKILLS */
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;}
+.skill-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px;transition:all 0.3s;position:relative;overflow:hidden;}
+.skill-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);opacity:0;transition:opacity 0.3s;}
+.skill-card:hover{border-color:rgba(0,229,255,0.15);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+.skill-card:hover::before{opacity:1;}
+.skill-card-icon{font-size:1.8rem;margin-bottom:12px;}
+.skill-card-title{font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;}
+.skill-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.skill-tag{font-family:'Space Mono',monospace;font-size:0.67rem;padding:4px 10px;border-radius:4px;background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--muted);transition:all 0.2s;}
+.skill-tag:hover{background:rgba(0,229,255,0.08);border-color:rgba(0,229,255,0.3);color:var(--accent);}
+
+/* SKILL BARS */
+.skill-bar-list{display:flex;flex-direction:column;gap:18px;}
+.skill-bar-header{display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.85rem;}
+.skill-bar-name{color:var(--text);font-weight:500;}
+.skill-bar-pct{font-family:'Space Mono',monospace;color:var(--accent);font-size:0.75rem;}
+.skill-bar-track{height:4px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden;}
+.skill-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;width:0%;transition:width 1.2s cubic-bezier(0.22,1,0.36,1);}
+
+/* RADAR CHART */
+#radarWrap{display:flex;justify-content:center;margin-top:48px;}
+#radarCanvas{max-width:400px;width:100%;}
+
+/* EDUCATION */
+.edu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;}
+.edu-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px;position:relative;overflow:hidden;transition:all 0.3s;}
+.edu-card:hover{border-color:rgba(0,229,255,0.15);}
+.edu-icon{font-size:2rem;margin-bottom:16px;}
+.edu-degree{font-family:'Clash Display',sans-serif;font-size:1.2rem;font-weight:600;margin-bottom:6px;}
+.edu-school{font-size:0.85rem;color:var(--accent);font-weight:500;margin-bottom:4px;}
+.edu-year{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--muted);}
+
+/* CONTACT */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.contact-item{display:flex;align-items:center;gap:16px;padding:20px 24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:var(--text);transition:all 0.3s;}
+.contact-item:hover{border-color:rgba(0,229,255,0.2);transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,0.3);}
+.contact-icon{font-size:1.4rem;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:rgba(var(--accent-rgb),0.06);border-radius:10px;flex-shrink:0;}
+.contact-label{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+.contact-value{font-size:0.88rem;}
+
+/* FOOTER */
+footer{position:relative;z-index:1;text-align:center;padding:48px;border-top:1px solid var(--border);font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--muted);letter-spacing:1px;}
+
+/* MUSIC BTN */
+#musicBtn{position:fixed;bottom:32px;left:32px;z-index:500;width:48px;height:48px;border-radius:50%;background:var(--surface);border:1px solid var(--border2);cursor:none;display:flex;align-items:center;justify-content:center;font-size:1.2rem;transition:all 0.3s;}
+#musicBtn:hover{border-color:var(--accent);box-shadow:0 0 16px rgba(var(--accent-rgb),0.3);}
+#musicBtn.playing{border-color:var(--accent);animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(var(--accent-rgb),0.4);}50%{box-shadow:0 0 0 8px rgba(var(--accent-rgb),0);}}
+
+/* CHAT */
+#chatBtn{position:fixed;bottom:32px;right:32px;z-index:500;width:56px;height:56px;border-radius:50%;background:var(--accent);border:none;cursor:none;display:flex;align-items:center;justify-content:center;font-size:1.3rem;box-shadow:0 8px 32px rgba(var(--accent-rgb),0.35);transition:all 0.3s;color:var(--bg);}
+#chatBtn:hover{transform:scale(1.1);}
+#chatPanel{position:fixed;bottom:100px;right:32px;z-index:500;width:360px;height:500px;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;display:flex;flex-direction:column;box-shadow:0 40px 80px rgba(0,0,0,0.7);transform:scale(0.9) translateY(20px);opacity:0;pointer-events:none;transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);overflow:hidden;}
+#chatPanel.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all;}
+.chat-header{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--bg2);}
+.chat-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:var(--bg);font-family:'Clash Display',sans-serif;flex-shrink:0;}
+.chat-hname{font-size:0.88rem;font-weight:600;}
+.chat-hsub{font-size:0.68rem;color:var(--accent);display:flex;align-items:center;gap:5px;}
+.chat-hsub::before{content:'';width:5px;height:5px;border-radius:50%;background:#4ade80;display:inline-block;}
+.chat-close{margin-left:auto;background:none;border:none;color:var(--muted);cursor:none;font-size:1rem;transition:color 0.2s;}
+.chat-close:hover{color:var(--text);}
+.chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:9px;}
+.chat-messages::-webkit-scrollbar{width:3px;}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+.msg{display:flex;flex-direction:column;max-width:85%;}
+.msg.bot{align-self:flex-start;}
+.msg.user{align-self:flex-end;}
+.msg-bubble{padding:9px 13px;border-radius:10px;font-size:0.82rem;line-height:1.5;}
+.msg.bot .msg-bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:2px;color:var(--text);}
+.msg.user .msg-bubble{background:var(--accent);color:var(--bg);font-weight:500;border-bottom-right-radius:2px;}
+.msg-time{font-size:0.62rem;color:var(--muted);margin-top:4px;padding:0 4px;}
+.msg.user .msg-time{align-self:flex-end;}
+.typing-indicator{display:flex;align-items:center;gap:4px;padding:9px 13px;background:var(--surface);border:1px solid var(--border);border-radius:10px;border-bottom-left-radius:2px;width:fit-content;}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:tdot 1.2s infinite;}
+.typing-dot:nth-child(2){animation-delay:0.2s;}
+.typing-dot:nth-child(3){animation-delay:0.4s;}
+@keyframes tdot{0%,80%,100%{transform:scale(0.6);opacity:0.4;}40%{transform:scale(1);opacity:1;}}
+.chat-chips{padding:7px 10px;display:flex;flex-wrap:wrap;gap:5px;border-top:1px solid var(--border);background:var(--bg2);}
+.chip{font-family:'Space Mono',monospace;font-size:0.58rem;padding:4px 9px;border-radius:20px;background:rgba(var(--accent-rgb),0.06);border:1px solid var(--border);color:var(--accent);cursor:none;transition:all 0.2s;}
+.chip:hover{background:rgba(var(--accent-rgb),0.15);}
+.chat-input-row{padding:10px;border-top:1px solid var(--border);display:flex;gap:6px;background:var(--bg2);}
+.chat-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:9px 13px;font-family:'Epilogue',sans-serif;font-size:0.82rem;color:var(--text);outline:none;transition:border-color 0.2s;cursor:text;}
+.chat-input:focus{border-color:rgba(var(--accent-rgb),0.4);}
+.chat-input::placeholder{color:var(--muted);}
+.chat-send{width:36px;height:36px;border-radius:6px;background:var(--accent);border:none;cursor:none;display:flex;align-items:center;justify-content:center;color:var(--bg);font-size:0.9rem;transition:all 0.2s;flex-shrink:0;}
+.chat-send:hover{transform:scale(1.05);}
+
+/* TYPEWRITER BLINK */
+.cursor-blink{display:inline-block;width:3px;height:1em;background:var(--accent);margin-left:4px;vertical-align:middle;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+@media (max-width:768px){
+  nav{padding:14px 20px;top:38px;}
+  .nav-links{display:none;}
+  section{padding:0 20px;}
+  #hero{padding-left:20px;padding-right:20px;}
+  .hero-stats{gap:24px;flex-wrap:wrap;}
+  .about-grid,.contact-grid{grid-template-columns:1fr;}
+  .skills-grid{grid-template-columns:1fr;}
+  #chatPanel{width:calc(100vw - 24px);right:12px;}
+  #hireBanner{font-size:0.62rem;padding:10px 40px;}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="progress-bar" id="progressBar"></div>
+<canvas id="bgCanvas"></canvas>
+
+<!-- HIRE BANNER -->
+<div id="hireBanner">
+  🚀 <span id="bannerText">Open to Work — QA Engineer | Automation | API Testing | Available Immediately</span>
+  <button class="close-banner" onclick="document.getElementById('hireBanner').style.display='none';document.querySelector('nav').classList.add('no-banner')">✕</button>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-logo">RK<span style="color:var(--muted)">.</span></div>
+  <ul class="nav-links">
+    <li><a href="#about" id="nav-about">About</a></li>
+    <li><a href="#experience" id="nav-exp">Experience</a></li>
+    <li><a href="#skills" id="nav-skills">Skills</a></li>
+    <li><a href="#education" id="nav-edu">Education</a></li>
+    <li><a href="#contact" id="nav-contact">Contact</a></li>
+  </ul>
+  <div class="nav-actions">
+    <!-- Language -->
+    <div class="lang-wrap">
+      <button class="nav-icon-btn" id="langBtn" title="Language" onclick="toggleLang()">🌐</button>
+      <div id="langPanel">
+        <div class="lang-opt active" onclick="setLang('en')">🇬🇧 English</div>
+        <div class="lang-opt" onclick="setLang('hi')">🇮🇳 हिंदी</div>
+      </div>
+    </div>
+    <!-- Theme -->
+    <button class="nav-icon-btn" id="themeBtn" title="Toggle theme" onclick="toggleTheme()">🌙</button>
+    <!-- Print -->
+    <button class="nav-icon-btn" id="printBtn" title="Download Resume" onclick="window.print()">🖨️</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-label" id="heroLabel">Available for Opportunities</div>
+  <h1 class="hero-name">
+    <div>Rohit</div>
+    <div class="line2">Kumar<span class="accent">.</span></div>
+  </h1>
+  <p class="hero-desc" id="heroDesc"></p>
+  <div class="hero-ctas">
+    <a href="#contact" class="btn-primary" id="heroBtn1">Get In Touch ↗</a>
+    <a href="#experience" class="btn-outline" id="heroBtn2">View Work ↓</a>
+  </div>
+  <div class="hero-stats">
+    <div><div class="stat-num">3<span style="color:var(--muted);font-size:1.4rem">+</span></div><div class="stat-label" id="stat1">Years Experience</div></div>
+    <div><div class="stat-num">95<span style="color:var(--muted);font-size:1.4rem">%</span></div><div class="stat-label" id="stat2">Test Coverage</div></div>
+    <div><div class="stat-num">6<span style="color:var(--muted);font-size:1.4rem">+</span></div><div class="stat-label" id="stat3">Testing Tools</div></div>
+    <div><div class="stat-num">0</div><div class="stat-label" id="stat4">Bugs in Production</div></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-wrap">
+    <div class="section-eyebrow reveal" id="eyebrow-about">Who I Am</div>
+    <h2 class="section-title reveal" id="title-about">About <span style="color:var(--accent)">Me</span></h2>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p id="about-p1">I'm a detail-oriented QA Engineer with over 3 years of experience ensuring software quality across SaaS, Desktop, and Mobile platforms. My approach combines deep technical knowledge with methodical precision.</p>
+        <p id="about-p2" style="margin-top:16px">I specialize in designing end-to-end automation frameworks using Selenium WebDriver and building CI/CD pipelines with Jenkins — bringing speed and reliability to every release cycle.</p>
+        <p id="about-p3" style="margin-top:16px">When I'm not hunting bugs, you'll find me on the cricket pitch or exploring new places around the country.</p>
+        <div class="lang-list" style="margin-top:28px">
+          <div class="lang-item">
+            <div class="lang-name"><span id="lang-en">English</span><span class="lang-level">Proficient</span></div>
+            <div class="lang-dots"><div class="lang-dot filled"></div><div class="lang-dot filled"></div><div class="lang-dot filled"></div><div class="lang-dot filled"></div><div class="lang-dot"></div></div>
+          </div>
+          <div class="lang-item">
+            <div class="lang-name"><span id="lang-hi">Hindi</span><span class="lang-level">Native</span></div>
+            <div class="lang-dots"><div class="lang-dot filled"></div><div class="lang-dot filled"></div><div class="lang-dot filled"></div><div class="lang-dot filled"></div><div class="lang-dot filled"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="about-highlights reveal reveal-delay-2">
+        <div class="highlight-item"><div class="highlight-icon">⚡</div><div><div class="highlight-label" id="h1">Adaptability</div><div class="highlight-sub" id="h1s">Quick to adjust to new environments & challenges</div></div></div>
+        <div class="highlight-item"><div class="highlight-icon">🧠</div><div><div class="highlight-label" id="h2">Quick Learner</div><div class="highlight-sub" id="h2s">Rapidly picks up new technologies & skills</div></div></div>
+        <div class="highlight-item"><div class="highlight-icon">🎯</div><div><div class="highlight-label" id="h3">High Accountability</div><div class="highlight-sub" id="h3s">Responsible, trustworthy, high-quality results</div></div></div>
+        <div class="highlight-item"><div class="highlight-icon">🏏</div><div><div class="highlight-label" id="h4">Cricket</div><div class="highlight-sub" id="h4s">Passionate player & sports enthusiast</div></div></div>
+        <div class="highlight-item"><div class="highlight-icon">✈️</div><div><div class="highlight-label" id="h5">Travelling</div><div class="highlight-sub" id="h5s">Exploring cultures and new experiences</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-wrap">
+    <div class="section-eyebrow reveal" id="eyebrow-exp">Career</div>
+    <h2 class="section-title reveal" id="title-exp">Work <span style="color:var(--accent)">Experience</span></h2>
+    <div class="exp-timeline">
+      <div class="exp-item reveal">
+        <div class="exp-period">Jan 2023 — Present</div>
+        <div class="exp-title" id="exp-role">QA Engineer</div>
+        <div class="exp-company"><span>Softiatric IT Services</span> · IT Services & Quality Assurance</div>
+        <ul class="exp-bullets">
+          <li id="eb1">Designed and executed automated test scripts using Selenium IDE and WebDriver with Java, achieving <strong style="color:var(--accent)">95%+</strong> test coverage.</li>
+          <li id="eb2">Led API Testing efforts using Postman and Swagger to validate backend responses and integration points.</li>
+          <li id="eb3">Performed comprehensive Manual Testing — Functional, Regression, System, and UAT — for SaaS and Desktop applications.</li>
+          <li id="eb4">Collaborated with developers in IntelliJ and VS Code for script debugging and code reviews.</li>
+          <li id="eb5">Managed defects and tracked progress via JIRA and Asana, ensuring clear stakeholder communication.</li>
+          <li id="eb6">Executed performance testing via Apache JMeter and cross-browser testing using BrowserStack.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-wrap">
+    <div class="section-eyebrow reveal" id="eyebrow-skills">Toolbox</div>
+    <h2 class="section-title reveal" id="title-skills">Technical <span style="color:var(--accent)">Skills</span></h2>
+    <div class="skills-grid" style="margin-bottom:48px">
+      <div class="skill-card reveal"><div class="skill-card-icon">🤖</div><div class="skill-card-title" id="sk1">Automation</div><div class="skill-tags"><span class="skill-tag">Selenium IDE</span><span class="skill-tag">Selenium WebDriver</span><span class="skill-tag">TestNG</span><span class="skill-tag">Maven</span><span class="skill-tag">Appium</span><span class="skill-tag">Jenkins</span></div></div>
+      <div class="skill-card reveal reveal-delay-1"><div class="skill-card-icon">💻</div><div class="skill-card-title" id="sk2">Languages</div><div class="skill-tags"><span class="skill-tag">Java</span><span class="skill-tag">JavaScript</span><span class="skill-tag">TypeScript</span><span class="skill-tag">C#</span></div></div>
+      <div class="skill-card reveal reveal-delay-2"><div class="skill-card-icon">🔌</div><div class="skill-card-title" id="sk3">API Testing</div><div class="skill-tags"><span class="skill-tag">Postman</span><span class="skill-tag">Swagger</span><span class="skill-tag">REST Assured</span><span class="skill-tag">Apache JMeter</span></div></div>
+      <div class="skill-card reveal"><div class="skill-card-icon">📋</div><div class="skill-card-title" id="sk4">Methodologies</div><div class="skill-tags"><span class="skill-tag">Agile</span><span class="skill-tag">Scrum</span><span class="skill-tag">SDLC</span><span class="skill-tag">STLC</span><span class="skill-tag">Bug Life Cycle</span></div></div>
+      <div class="skill-card reveal reveal-delay-1"><div class="skill-card-icon">🛠️</div><div class="skill-card-title" id="sk5">Tools & Platforms</div><div class="skill-tags"><span class="skill-tag">JIRA</span><span class="skill-tag">Asana</span><span class="skill-tag">GitHub</span><span class="skill-tag">BrowserStack</span><span class="skill-tag">Shortcut</span></div></div>
+      <div class="skill-card reveal reveal-delay-2"><div class="skill-card-icon">📱</div><div class="skill-card-title" id="sk6">IDEs & Mobile</div><div class="skill-tags"><span class="skill-tag">IntelliJ</span><span class="skill-tag">VS Code</span><span class="skill-tag">Eclipse</span><span class="skill-tag">Visual Studio</span><span class="skill-tag">Emulators</span></div></div>
+    </div>
+
+    <!-- Proficiency Bars -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;margin-bottom:48px" class="reveal">
+      <div style="font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px" id="profTitle">Core Proficiency</div>
+      <div class="skill-bar-list">
+        <div class="skill-bar-item"><div class="skill-bar-header"><span class="skill-bar-name">Selenium WebDriver</span><span class="skill-bar-pct">92%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-width="92"></div></div></div>
+        <div class="skill-bar-item"><div class="skill-bar-header"><span class="skill-bar-name">Java</span><span class="skill-bar-pct">88%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-width="88"></div></div></div>
+        <div class="skill-bar-item"><div class="skill-bar-header"><span class="skill-bar-name">API Testing (Postman)</span><span class="skill-bar-pct">90%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-width="90"></div></div></div>
+        <div class="skill-bar-item"><div class="skill-bar-header"><span class="skill-bar-name">Manual Testing</span><span class="skill-bar-pct">95%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-width="95"></div></div></div>
+        <div class="skill-bar-item"><div class="skill-bar-header"><span class="skill-bar-name">JIRA / Project Tools</span><span class="skill-bar-pct">85%</span></div><div class="skill-bar-track"><div class="skill-bar-fill" data-width="85"></div></div></div>
+      </div>
+    </div>
+
+    <!-- Radar Chart -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px" class="reveal">
+      <div style="font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px" id="radarTitle">Skills Radar</div>
+      <div id="radarWrap"><canvas id="radarCanvas" width="400" height="400"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-wrap">
+    <div class="section-eyebrow reveal" id="eyebrow-edu">Academic</div>
+    <h2 class="section-title reveal" id="title-edu">Education <span style="color:var(--accent)">Background</span></h2>
+    <div class="edu-grid">
+      <div class="edu-card reveal"><div class="edu-icon">🎓</div><div class="edu-degree" id="edu1deg">B.Tech</div><div class="edu-school">Kurukshetra University</div><div class="edu-year">Aug 2016 — May 2020</div></div>
+      <div class="edu-card reveal reveal-delay-1"><div class="edu-icon">📐</div><div class="edu-degree" id="edu2deg">Polytechnic Diploma</div><div class="edu-school">HSBTE, Panchkula</div><div class="edu-year">Aug 2011 — May 2014</div></div>
+      <div class="edu-card reveal reveal-delay-2"><div class="edu-icon">📚</div><div class="edu-degree" id="edu3deg">12th Standard</div><div class="edu-school">Saraswati Senior Secondary School</div><div class="edu-year">2011</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-wrap">
+    <div class="section-eyebrow reveal" id="eyebrow-contact">Let's Connect</div>
+    <h2 class="section-title reveal" id="title-contact">Get In <span style="color:var(--accent)">Touch</span></h2>
+    <div class="contact-grid">
+      <a href="tel:+918818054379" class="contact-item reveal"><div class="contact-icon">📞</div><div><div class="contact-label" id="c1l">Phone</div><div class="contact-value">+91 8818054379</div></div></a>
+      <a href="mailto:Rohitkoshal44@gmail.com" class="contact-item reveal reveal-delay-1"><div class="contact-icon">✉️</div><div><div class="contact-label" id="c2l">Email</div><div class="contact-value">Rohitkoshal44@gmail.com</div></div></a>
+      <a href="https://linkedin.com/in/rohitkumar-446998152" target="_blank" class="contact-item reveal reveal-delay-2"><div class="contact-icon">💼</div><div><div class="contact-label" id="c3l">LinkedIn</div><div class="contact-value">rohitkumar-446998152</div></div></a>
+      <div class="contact-item reveal reveal-delay-3"><div class="contact-icon">📍</div><div><div class="contact-label" id="c4l">Location</div><div class="contact-value" id="c4v">Zirakpur, Punjab, India</div></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="font-size:1.1rem;margin-bottom:6px">Rohit Kumar · QA Engineer</div>
+  <div id="footerText">Built with ❤️ · Zirakpur, Punjab · 2025</div>
+</footer>
+
+<!-- MUSIC BTN -->
+<button id="musicBtn" title="Background Music" onclick="toggleMusic()">🎵</button>
+<audio id="bgMusic" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<!-- CHAT -->
+<button id="chatBtn" onclick="toggleChat()">🤖</button>
+<div id="chatPanel">
+  <div class="chat-header">
+    <div class="chat-avatar">R</div>
+    <div><div class="chat-hname" id="chatTitle">Ask about Rohit</div><div class="chat-hsub" id="chatSub">AI Assistant · Online</div></div>
+    <button class="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="msg bot"><div class="msg-bubble" id="chatWelcome">👋 Hi! I'm Rohit's AI assistant. Ask me anything about his skills, experience, or how to reach him!</div><div class="msg-time">Just now</div></div>
+  </div>
+  <div class="chat-chips" id="chatChips">
+    <button class="chip" onclick="sendMsg('What are your skills?')">💻 Skills</button>
+    <button class="chip" onclick="sendMsg('Tell me about your experience')">🚀 Experience</button>
+    <button class="chip" onclick="sendMsg('How can I contact you?')">📞 Contact</button>
+    <button class="chip" onclick="sendMsg('What is your education?')">🎓 Education</button>
+  </div>
+  <div class="chat-input-row">
+    <input class="chat-input" id="chatInput" type="text" placeholder="Ask anything about Rohit…" onkeydown="if(event.key==='Enter')sendMsg(this.value)"/>
+    <button class="chat-send" onclick="sendMsg(document.getElementById('chatInput').value)">➤</button>
+  </div>
+</div>
+
+<script>
+// ── CURSOR (FIXED — NO BLEND MODE) ──
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0,cursorVisible=false;
+function showCursor(){if(!cursorVisible){cursorVisible=true;cur.style.opacity='1';ring.style.opacity='0.7';}}
+function moveCursor(e){mx=e.clientX;my=e.clientY;cur.style.left=(mx-6)+'px';cur.style.top=(my-6)+'px';showCursor();}
+document.addEventListener('mousemove',moveCursor);
+document.addEventListener('mouseenter',moveCursor);
+document.addEventListener('mouseleave',()=>{cur.style.opacity='0';ring.style.opacity='0';cursorVisible=false;});
+(function ar(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=(rx-19)+'px';ring.style.top=(ry-19)+'px';requestAnimationFrame(ar);})();
+document.querySelectorAll('a,button').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{ring.style.transform='scale(1.6)';ring.style.opacity='1';cur.style.transform='scale(0.6)';});
+  el.addEventListener('mouseleave',()=>{ring.style.transform='scale(1)';ring.style.opacity='0.7';cur.style.transform='scale(1)';});
+});
+
+// ── SCROLL PROGRESS ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('progressBar').style.width=(window.scrollY/(document.body.scrollHeight-window.innerHeight)*100)+'%';
+});
+
+// ── CANVAS PARTICLES ──
+const canvas=document.getElementById('bgCanvas'),ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+const pts=Array.from({length:80},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height,vx:(Math.random()-0.5)*0.3,vy:(Math.random()-0.5)*0.3,r:Math.random()*1.5+0.5}));
+function drawCanvas(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>canvas.width)p.vx*=-1;if(p.y<0||p.y>canvas.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(0,229,255,0.5)';ctx.fill();});
+  pts.forEach((a,i)=>{pts.slice(i+1).forEach(b=>{const d=Math.hypot(a.x-b.x,a.y-b.y);if(d<120){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(0,229,255,${0.06*(1-d/120)})`;ctx.lineWidth=0.5;ctx.stroke();}});});
+  requestAnimationFrame(drawCanvas);
+}
+drawCanvas();
+
+// ── SCROLL REVEAL ──
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.classList.add('visible');
+      e.target.querySelectorAll('.skill-bar-fill').forEach(b=>{b.style.width=b.dataset.width+'%';});
+    }
+  });
+},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// ── TYPEWRITER EFFECT ──
+const phrases=['QA Engineer crafting reliable software through meticulous testing — from Selenium pipelines to API validation.','3+ years ensuring zero bugs reach production.','Automation Expert | Selenium | Postman | Jenkins | BrowserStack'];
+let pi=0,ci=0,typing=true;
+const heroDesc=document.getElementById('heroDesc');
+function typeWriter(){
+  if(typing){
+    if(ci<phrases[pi].length){heroDesc.innerHTML=phrases[pi].substring(0,ci+1)+'<span class="cursor-blink"></span>';ci++;setTimeout(typeWriter,40);}
+    else{typing=false;setTimeout(typeWriter,2200);}
+  } else {
+    if(ci>0){heroDesc.innerHTML=phrases[pi].substring(0,ci-1)+'<span class="cursor-blink"></span>';ci--;setTimeout(typeWriter,18);}
+    else{typing=true;pi=(pi+1)%phrases.length;setTimeout(typeWriter,300);}
+  }
+}
+typeWriter();
+
+// ── THEME TOGGLE ──
+function toggleTheme(){
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  document.documentElement.setAttribute('data-theme',isDark?'light':'dark');
+  document.getElementById('themeBtn').textContent=isDark?'☀️':'🌙';
+}
+
+// ── LANGUAGE SWITCHER ──
+let currentLang='en';
+const translations={
+  en:{
+    heroLabel:'Available for Opportunities',heroBtn1:'Get In Touch ↗',heroBtn2:'View Work ↓',
+    stat1:'Years Experience',stat2:'Test Coverage',stat3:'Testing Tools',stat4:'Bugs in Production',
+    'eyebrow-about':'Who I Am','title-about':'About <span style="color:var(--accent)">Me</span>',
+    'about-p1':"I'm a detail-oriented QA Engineer with over 3 years of experience ensuring software quality across SaaS, Desktop, and Mobile platforms.",
+    'about-p2':"I specialize in designing end-to-end automation frameworks using Selenium WebDriver and building CI/CD pipelines with Jenkins.",
+    'about-p3':"When I'm not hunting bugs, you'll find me on the cricket pitch or exploring new places.",
+    h1:'Adaptability',h1s:'Quick to adjust to new environments & challenges',
+    h2:'Quick Learner',h2s:'Rapidly picks up new technologies & skills',
+    h3:'High Accountability',h3s:'Responsible, trustworthy, high-quality results',
+    h4:'Cricket',h4s:'Passionate player & sports enthusiast',
+    h5:'Travelling',h5s:'Exploring cultures and new experiences',
+    'eyebrow-exp':'Career','title-exp':'Work <span style="color:var(--accent)">Experience</span>',
+    'exp-role':'QA Engineer',
+    'eyebrow-skills':'Toolbox','title-skills':'Technical <span style="color:var(--accent)">Skills</span>',
+    profTitle:'Core Proficiency',radarTitle:'Skills Radar',
+    'eyebrow-edu':'Academic','title-edu':'Education <span style="color:var(--accent)">Background</span>',
+    edu1deg:'B.Tech',edu2deg:'Polytechnic Diploma',edu3deg:'12th Standard',
+    'eyebrow-contact':"Let's Connect",'title-contact':'Get In <span style="color:var(--accent)">Touch</span>',
+    c1l:'Phone',c2l:'Email',c3l:'LinkedIn',c4l:'Location',c4v:'Zirakpur, Punjab, India',
+    chatTitle:'Ask about Rohit',chatSub:'AI Assistant · Online',
+    chatWelcome:'👋 Hi! I\'m Rohit\'s AI assistant. Ask me anything about his skills, experience, or how to reach him!',
+    bannerText:'🚀 Open to Work — QA Engineer | Automation | API Testing | Available Immediately',
+    footerText:'Built with ❤️ · Zirakpur, Punjab · 2025',
+    sk1:'Automation',sk2:'Languages',sk3:'API Testing',sk4:'Methodologies',sk5:'Tools & Platforms',sk6:'IDEs & Mobile',
+    'lang-en':'English','lang-hi':'Hindi',
+    'nav-about':'About','nav-exp':'Experience','nav-skills':'Skills','nav-edu':'Education','nav-contact':'Contact'
+  },
+  hi:{
+    heroLabel:'अवसरों के लिए उपलब्ध',heroBtn1:'संपर्क करें ↗',heroBtn2:'कार्य देखें ↓',
+    stat1:'वर्षों का अनुभव',stat2:'परीक्षण कवरेज',stat3:'परीक्षण उपकरण',stat4:'बग्स इन प्रोडक्शन',
+    'eyebrow-about':'मेरे बारे में','title-about':'मेरे <span style="color:var(--accent)">बारे में</span>',
+    'about-p1':'मैं एक QA इंजीनियर हूं जिसे 3+ वर्षों का अनुभव है — SaaS, Desktop और Mobile प्लेटफ़ॉर्म पर।',
+    'about-p2':'मैं Selenium WebDriver और Jenkins CI/CD पाइपलाइन से ऑटोमेशन फ्रेमवर्क बनाने में विशेषज्ञ हूं।',
+    'about-p3':'काम के बाहर, मुझे क्रिकेट खेलना और नई जगहें घूमना पसंद है।',
+    h1:'अनुकूलनशीलता',h1s:'नए वातावरण में जल्दी ढलना',
+    h2:'तेज़ सीखने वाला',h2s:'नई तकनीकें जल्दी सीखता हूं',
+    h3:'जवाबदेही',h3s:'भरोसेमंद और उच्च-गुणवत्ता परिणाम',
+    h4:'क्रिकेट',h4s:'खेल प्रेमी और उत्साही खिलाड़ी',
+    h5:'यात्रा',h5s:'नई संस्कृतियों और जगहों की खोज',
+    'eyebrow-exp':'करियर','title-exp':'कार्य <span style="color:var(--accent)">अनुभव</span>',
+    'exp-role':'QA इंजीनियर',
+    'eyebrow-skills':'टूलबॉक्स','title-skills':'तकनीकी <span style="color:var(--accent)">कौशल</span>',
+    profTitle:'मुख्य दक्षता',radarTitle:'कौशल रडार',
+    'eyebrow-edu':'शैक्षणिक','title-edu':'शैक्षिक <span style="color:var(--accent)">पृष्ठभूमि</span>',
+    edu1deg:'बी.टेक',edu2deg:'पॉलिटेक्निक डिप्लोमा',edu3deg:'12वीं कक्षा',
+    'eyebrow-contact':'संपर्क','title-contact':'संपर्क <span style="color:var(--accent)">करें</span>',
+    c1l:'फ़ोन',c2l:'ईमेल',c3l:'लिंक्डइन',c4l:'स्थान',c4v:'ज़ीरकपुर, पंजाब, भारत',
+    chatTitle:'रोहित के बारे में पूछें',chatSub:'AI सहायक · ऑनलाइन',
+    chatWelcome:'👋 नमस्ते! मैं रोहित का AI सहायक हूं। उनके कौशल, अनुभव या संपर्क के बारे में पूछें!',
+    bannerText:'🚀 काम के लिए उपलब्ध — QA इंजीनियर | ऑटोमेशन | API टेस्टिंग',
+    footerText:'❤️ के साथ बनाया · ज़ीरकपुर, पंजाब · 2025',
+    sk1:'ऑटोमेशन',sk2:'भाषाएँ',sk3:'API टेस्टिंग',sk4:'पद्धतियाँ',sk5:'टूल्स',sk6:'IDEs और मोबाइल',
+    'lang-en':'अंग्रेजी','lang-hi':'हिंदी',
+    'nav-about':'परिचय','nav-exp':'अनुभव','nav-skills':'कौशल','nav-edu':'शिक्षा','nav-contact':'संपर्क'
+  }
+};
+function setLang(lang){
+  currentLang=lang;
+  const t=translations[lang];
+  Object.keys(t).forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.innerHTML=t[id];
+  });
+  document.querySelectorAll('.lang-opt').forEach((o,i)=>o.classList.toggle('active',i===(lang==='en'?0:1)));
+  document.getElementById('langPanel').classList.remove('open');
+  document.documentElement.lang=lang;
+}
+function toggleLang(){document.getElementById('langPanel').classList.toggle('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.lang-wrap'))document.getElementById('langPanel').classList.remove('open');});
+
+// ── MUSIC PLAYER ──
+let musicPlaying=false;
+function toggleMusic(){
+  const audio=document.getElementById('bgMusic');
+  const btn=document.getElementById('musicBtn');
+  if(musicPlaying){audio.pause();btn.textContent='🎵';btn.classList.remove('playing');}
+  else{audio.play().catch(()=>{});btn.textContent='🔊';btn.classList.add('playing');}
+  musicPlaying=!musicPlaying;
+}
+
+// ── RADAR CHART ──
+function drawRadar(){
+  const c=document.getElementById('radarCanvas');
+  const ctx=c.getContext('2d');
+  const cx=200,cy=200,r=140;
+  const skills=[
+    {label:'Automation',val:0.92},
+    {label:'API Testing',val:0.90},
+    {label:'Manual Testing',val:0.95},
+    {label:'Java',val:0.88},
+    {label:'CI/CD',val:0.82},
+    {label:'Performance',val:0.80}
+  ];
+  const n=skills.length;
+  const angle=(i)=>(Math.PI*2/n)*i - Math.PI/2;
+  const isDark=document.documentElement.getAttribute('data-theme')!=='light';
+  const textColor=isDark?'rgba(232,237,245,0.8)':'rgba(15,25,35,0.8)';
+  const gridColor=isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)';
+  ctx.clearRect(0,0,400,400);
+  // Grid rings
+  [0.25,0.5,0.75,1].forEach(f=>{
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const a=angle(i);
+      const x=cx+Math.cos(a)*r*f,y=cy+Math.sin(a)*r*f;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle=gridColor;ctx.lineWidth=1;ctx.stroke();
+  });
+  // Spokes
+  skills.forEach((_,i)=>{
+    const a=angle(i);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);
+    ctx.strokeStyle=gridColor;ctx.lineWidth=1;ctx.stroke();
+  });
+  // Fill
+  ctx.beginPath();
+  skills.forEach((s,i)=>{
+    const a=angle(i),x=cx+Math.cos(a)*r*s.val,y=cy+Math.sin(a)*r*s.val;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(0,229,255,0.12)';ctx.fill();
+  ctx.strokeStyle='rgba(0,229,255,0.7)';ctx.lineWidth=2;ctx.stroke();
+  // Dots
+  skills.forEach((s,i)=>{
+    const a=angle(i),x=cx+Math.cos(a)*r*s.val,y=cy+Math.sin(a)*r*s.val;
+    ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);
+    ctx.fillStyle='#00e5ff';ctx.fill();
+    ctx.strokeStyle='var(--bg)';ctx.lineWidth=2;ctx.stroke();
+  });
+  // Labels
+  ctx.font='500 12px Epilogue,sans-serif';ctx.fillStyle=textColor;ctx.textAlign='center';
+  skills.forEach((s,i)=>{
+    const a=angle(i),lx=cx+Math.cos(a)*(r+26),ly=cy+Math.sin(a)*(r+26);
+    ctx.fillText(s.label,lx,ly+4);
+    const pct=Math.round(s.val*100)+'%';
+    ctx.fillStyle='rgba(0,229,255,0.8)';ctx.font='bold 10px Space Mono,monospace';
+    ctx.fillText(pct,lx,ly+18);
+    ctx.fillStyle=textColor;ctx.font='500 12px Epilogue,sans-serif';
+  });
+}
+window.addEventListener('load',drawRadar);
+
+// Redraw radar on theme change
+const origToggleTheme=window.toggleTheme;
+window.toggleTheme=function(){origToggleTheme();setTimeout(drawRadar,420);};
+
+// ── CHAT ──
+let chatOpen=false;
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('chatPanel').classList.toggle('open',chatOpen);
+}
+function getTime(){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function appendMsg(text,role){
+  const d=document.createElement('div');d.className=`msg ${role}`;
+  d.innerHTML=`<div class="msg-bubble">${text}</div><div class="msg-time">${getTime()}</div>`;
+  document.getElementById('chatMessages').appendChild(d);
+  document.getElementById('chatMessages').scrollTop=9999;
+}
+function showTyping(){
+  const d=document.createElement('div');d.className='msg bot';d.id='typing';
+  d.innerHTML=`<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+  document.getElementById('chatMessages').appendChild(d);
+  document.getElementById('chatMessages').scrollTop=9999;
+}
+function removeTyping(){const t=document.getElementById('typing');if(t)t.remove();}
+
+function getReply(text){
+  const q=text.toLowerCase();
+  if(/skill|tech|tool|selenium|java|postman|jmeter|jenkins|testng|appium|stack|know|use|language|framework/.test(q))
+    return "Rohit's core skills include <strong>Selenium WebDriver</strong>, TestNG, Maven, Appium, Jenkins CI/CD, Postman, REST Assured, JMeter, BrowserStack, JIRA, Agile/Scrum — coding in Java, JavaScript, TypeScript & C#. 💻";
+  if(/experience|work|job|company|current|softiatric|year/.test(q))
+    return "Rohit has <strong>3+ years of QA experience</strong>. Currently QA Engineer at <strong>Softiatric IT Services</strong> (Jan 2023–Present) — 95%+ test coverage, Selenium automation, Postman API validation & Jenkins CI/CD. 🚀";
+  if(/education|degree|college|university|btech|study/.test(q))
+    return "Rohit holds a <strong>B.Tech from Kurukshetra University</strong> (2016–2020), a Polytechnic Diploma from HSBTE (2011–2014), and completed 12th from Saraswati School. 🎓";
+  if(/contact|email|phone|reach|call|linkedin|connect/.test(q))
+    return "📧 <strong>Rohitkoshal44@gmail.com</strong><br>📞 <strong>+91 8818054379</strong><br>💼 <a href='https://linkedin.com/in/rohitkumar-446998152' target='_blank' style='color:var(--accent)'>LinkedIn</a><br>📍 Zirakpur, Punjab, India";
+  if(/location|city|where|based|india|punjab|zirakpur/.test(q))
+    return "Rohit is based in <strong>Zirakpur, Punjab, India</strong> 📍 and is open to remote opportunities worldwide.";
+  if(/strength|soft skill|quality|personality/.test(q))
+    return "Rohit's strengths: <strong>Adaptability</strong>, <strong>Quick Learner</strong>, and <strong>High Accountability</strong>. He thrives in Agile/Scrum teams. 💡";
+  if(/hobby|interest|cricket|travel|free time/.test(q))
+    return "Outside of work, Rohit enjoys <strong>Cricket</strong> 🏏 and <strong>Travelling</strong> ✈️!";
+  if(/automation|selenium|framework|ci|cd|pipeline/.test(q))
+    return "Rohit builds <strong>end-to-end automation frameworks</strong> with Selenium WebDriver + Java + TestNG + Maven, integrated into <strong>Jenkins CI/CD</strong>. BrowserStack for cross-browser. ⚙️";
+  if(/api|postman|rest|swagger|jmeter|performance/.test(q))
+    return "Rohit validates APIs using <strong>Postman</strong>, Swagger & REST Assured. Performance testing with <strong>Apache JMeter</strong>. 🔌";
+  if(/mobile|appium/.test(q))
+    return "Yes! Rohit uses <strong>Appium</strong> for Android/iOS mobile app automation testing. 📱";
+  if(/hire|available|open|opportunity/.test(q))
+    return "Rohit is open to exciting QA opportunities! 🎯 Email <strong>Rohitkoshal44@gmail.com</strong> or call <strong>+91 8818054379</strong>.";
+  if(/hello|hi|hey|namaste|good/.test(q))
+    return "👋 Hi there! I'm Rohit's AI assistant. Ask me about his <em>skills</em>, <em>experience</em>, <em>education</em>, or <em>contact info</em>!";
+  if(/who|rohit|about|tell/.test(q))
+    return "<strong>Rohit Kumar</strong> is a QA Engineer with 3+ years of experience in test automation, API validation & CI/CD pipelines. Based in Zirakpur, Punjab, India. 🧑‍💻";
+  return "Great question! For details email <strong>Rohitkoshal44@gmail.com</strong>. Or ask me about his <em>skills</em>, <em>experience</em>, <em>education</em>, or <em>contact</em>! 😊";
+}
+
+function sendMsg(text){
+  if(!text||!text.trim())return;
+  document.getElementById('chatChips').style.display='none';
+  appendMsg(text,'user');
+  document.getElementById('chatInput').value='';
+  showTyping();
+  setTimeout(()=>{removeTyping();appendMsg(getReply(text),'bot');},700);
+}
+document.getElementById('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter')sendMsg(e.target.value);});
+</script>
+</body>
+</html>
